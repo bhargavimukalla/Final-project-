@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Electronics Store</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0; padding: 0;
+      background: #f4f4f9;
+    }
+    header {
+      background: #1E88E5;
+      color: white;
+      text-align: center;
+      padding: 20px 10px;
+      font-size: 24px;
+      font-weight: bold;
+    }
+    .main-container {
+      display: flex;
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 0 15px;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    /* Products container */
+    .products-container {
+      flex: 2;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+    }
+    .search-bar {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .search-bar input {
+      width: 90%;
+      max-width: 400px;
+      padding: 8px 12px;
+      font-size: 16px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    .products {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 20px;
+    }
+    .product {
+      background: #f9f9f9;
+      padding: 15px;
+      border-radius: 10px;
+      text-align: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      transition: transform 0.2s;
+    }
+    .product:hover { transform: translateY(-5px); }
+    .product img {
+      width: 100%;
+      height: 150px;
+      object-fit: contain;
+      margin-bottom: 10px;
+    }
+    .product h3 { margin: 10px 0 5px; font-size: 18px; color: #222; }
+    .product p { margin: 5px 0 10px; font-weight: bold; color: #1E88E5; }
+    .product button {
+      background: #1E88E5;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    .product button:hover { background: #1565C0; }
+
+    /* Cart container */
+    .cart-container {
+      flex: 1;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+      min-width: 250px;
+    }
+    .cart-item {
+      background: #f9f9f9;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 10px 15px;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .cart-item button {
+      background: red;
+      padding: 5px 10px;
+      border-radius: 5px;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    .cart-item button:hover { background: darkred; }
+    .total {
+      margin-top: 15px;
+      font-size: 20px;
+      font-weight: bold;
+      text-align: right;
+      color: #1E88E5;
+    }
+
+    @media (max-width: 900px) {
+      .main-container { flex-direction: column; }
+    }
+    @media (max-width: 600px) {
+      .product img { height: 120px; }
+      .product h3 { font-size: 16px; }
+      .product p { font-size: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>🛒 Electronics Store</header>
+
+<div class="main-container">
+
+  <!-- Products Section -->
+  <div class="products-container">
+    <div class="search-bar">
+      <input type="text" id="search" placeholder="Search for products..." onkeyup="filterProducts()">
+    </div>
+    <h2>Products</h2>
+    <div class="products" id="products-list">
+      <div class="product" data-name="Laptop">
+        <img src="laptop.jpg" alt="Laptop">
+        <h3>Laptop</h3>
+        <p>₹50,000</p>
+        <button onclick="addToCart('Laptop', 50000)">Add to Cart</button>
+      </div>
+      <div class="product" data-name="Mobile">
+        <img src="mobile.jpg" alt="Mobile">
+        <h3>Mobile</h3>
+        <p>₹20,000</p>
+        <button onclick="addToCart('Mobile', 20000)">Add to Cart</button>
+      </div>
+      <div class="product" data-name="Headphones">
+        <img src="headphones.jpg" alt="Headphones">
+        <h3>Headphones</h3>
+        <p>₹3,000</p>
+        <button onclick="addToCart('Headphones', 3000)">Add to Cart</button>
+      </div>
+      <div class="product" data-name="Smartwatch">
+        <img src="smartwatches.jpg" alt="Smartwatch">
+        <h3>Smartwatch</h3>
+        <p>₹7,000</p>
+        <button onclick="addToCart('Smartwatch', 7000)">Add to Cart</button>
+      </div>
+      <div class="product" data-name="Camera">
+        <img src="camera.jpg" alt="Camera">
+        <h3>Camera</h3>
+        <p>₹25,000</p>
+        <button onclick="addToCart('Camera', 25000)">Add to Cart</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cart Section -->
+  <div class="cart-container">
+    <h2>Your Cart</h2>
+    <div id="cart-items">Your cart is empty.</div>
+    <div class="total" id="cart-total">Total: ₹0</div>
+  </div>
+
+</div>
+
+<script>
+  let cart = [];
+
+  function addToCart(name, price) {
+    cart.push({ name, price });
+    displayCart();
+  }
+
+  function removeFromCart(index) {
+    cart.splice(index, 1);
+    displayCart();
+  }
+
+  function displayCart() {
+    const cartItemsDiv = document.getElementById('cart-items');
+    cartItemsDiv.innerHTML = '';
+    if(cart.length === 0) {
+      cartItemsDiv.innerHTML = "Your cart is empty.";
+    }
+    let total = 0;
+    cart.forEach((item, index) => {
+      total += item.price;
+      cartItemsDiv.innerHTML += `
+        <div class="cart-item">
+          <span>${item.name} - ₹${item.price}</span>
+          <button onclick="removeFromCart(${index})">Remove</button>
+        </div>`;
+    });
+    document.getElementById('cart-total').innerText = "Total: ₹" + total;
+  }
+
+  function filterProducts() {
+    const input = document.getElementById('search').value.toLowerCase();
+    const products = document.querySelectorAll('.product');
+    products.forEach(product => {
+      const name = product.getAttribute('data-name').toLowerCase();
+      product.style.display = name.includes(input) ? 'block' : 'none';
+    });
+  }
+</script>
+
+</body>
+</html>
